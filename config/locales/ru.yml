@@ -9,5 +9,10 @@ ru:
   settings_display_minimized_closed_issue_cards: 'Отображать свернутые карточки "закрытых" задач'
   settings_enable_drag_and_drop: '"Drag and drop" изменение статуса'
   settings_generate_colors: "Сгенерировать цвета"
-  executor_not_set: "Не установлен"
+  settings_display_issue_card_author: 'Отображать автора задачи'
+  settings_header_priorities: "Цвета приоритетов"
+  settings_display_issue_card_priority: 'Отображать приоритет задачи'
+  executor_not_set: "Не назначен"
+  kanban: "Канбан"
+  person: "Сотрудники"
   label_all: "Все"

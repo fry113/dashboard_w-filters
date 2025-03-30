@@ -1,6 +1,2 @@
 .vscode
 dashboard.zip
-*.testlog
-.vs/dashboard_w-filters/v16/TestStore/0/testlog.manifest
-.vs/ProjectSettings.json
-.vs/slnx.sqlite

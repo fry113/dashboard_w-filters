@@ -33,6 +33,7 @@
 
 .issues_container {
 	display: flex;
+	overflow: scroll;
 	height: 100%;
 	width: 100%;
 }
@@ -83,7 +84,7 @@
 	display: flex;
 	width: 100%;
 	margin: 3px;
-	border-radius: 5px;
+	border-radius: 7px;
 	height: min-content;
 	background-color: rgb(240, 240, 240);
 	align-self: center;
@@ -120,6 +121,7 @@
 
 .status_column_issues .issue_card .issue_card_title {
 	padding-top: 5px;
+	padding-bottom: 5px;
 	font-size: medium;
 	font-weight: 600;
 }
@@ -137,7 +139,7 @@
 }
 
 .status_column_issues .issue_card .issue_card_author i {
-	color: green;
+	color: black;
 	font-size: medium;
 }
 
@@ -159,14 +161,31 @@
 }
 
 .status_column_issues .issue_card .issue_card_executor i {
-	color: purple;
+	color: black;
 	font-size: medium;
 }
+
+
+.status_column_issues .issue_card .issue_card_station {
+	padding-bottom: 5px;
+}
+
+.status_column_closed_issues .issue_card .issue_card_station {
+    display: none;
+}
+
+.status_column_issues .issue_card .issue_card_station i {
+	color: black;
+	font-size: medium;
+}
+
 
 .status_column_issues .issue_card .issue_card_header {
 	display: flex;
 	padding-top: 10px;
-	align-items: center;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
 	width: 100%;
 }
 
@@ -174,20 +193,78 @@
     display: none;
 }
 
-.status_column_issues .issue_card_header_project {
+.status_column_issues .issue_card .issue_card_header .issue_card_header_date_priority {
 	display: flex;
-	margin-left: auto;
+	flex-direction: column;
+	padding-top: 10px;
+	align-items: top;
+	width: 100%;
+}
+
+.status_column_issues .issue_card_header_priority {
+	/* position */
+	display: flex;
+	margin-left: 10px;
+	/* margin-top: 10px;
+	margin-bottom: 5px;
+	margin-right: 5px; */
+	/* shape */
 	padding-top: 5px;
 	padding-bottom: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
+	border-radius: 7px;
+
+	width: auto;
+	height: fit-content;
+	/* font, color */
+	color: rgb(0, 0, 0);
+	text-align: center;
+	font-size: normal;
+}
+
+.status_column_issues .issue_card_header_date {
+	/* position */
+	display: flex;
+	margin-left: 10px;
+	margin-top: 5px;
+	/* margin-bottom: 10px;
+	margin-right: 5px; */
+	/* shape */
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	border-radius: 7px;
+	/* font, color */
+	color: rgb(0, 0, 0);
+	text-align: center;
+	font-size: smaller;
+}
+
+.status_column_issues .issue_card_header_project {
+	/* position */
+	display: flex;
 	margin-right: 10px;
-	border-radius: 200px;
+	margin-left: 5px;
+	/* margin-top: 10px;
+	margin-bottom: 10px; */
+	/* shape */
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	border-radius: 7px;
+
 	width: fit-content;
 	height: fit-content;
+	/* font, color */
+	color: rgb(0, 0, 0);
 	text-align: center;
-	color: rgb(255, 255, 255);
-	font-size: smaller;
+	font-size: normal;
+	
+	/* color: rgb(255, 255, 255); */
+    font-weight: bold;
 }
 
 .status_column_closed_issues .issue_card .issue_card_id {

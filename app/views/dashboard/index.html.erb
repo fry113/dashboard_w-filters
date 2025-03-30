@@ -5,7 +5,17 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 <% end %>
 
+<%# Select view menu %>
+<%# TODO: change 'person' to 'executors' %>
+<label for="select_view">Тип обзора:</label>
+<select id="select_view">
+    <option value="kanban" <%= @selected_view == 'kanban' ? 'selected' : '' %>><%=l :kanban %></option>
+    <option value="person" <%= @selected_view == 'person' ? 'selected' : '' %>><%=l :person %></option>
+</select>
+
+<%# Select project group of 'buttons' or dropdown menu %>
 <% if @use_drop_down_menu %>
+	<label for="select_project">Проект:</label>
 	<select id="select_project">
 		<% @projects.each do |project_id, project| %>
 			<% if project_id == @selected_project_id %>
@@ -27,41 +37,127 @@
 	</div>
 <% end %>
 
-<div class="issues_container">
-	<% @statuses.each do |status_id, status| %>
-		<div class="status_column" data-id="<%= status_id %>">
-			<div class="status_column_header" style="border-bottom-color: <%= status[:color] %>">
-				<span> <%= status[:name] %> </span>
+<%# Select executor menu %>
+<label for="select_executor">Исполнитель:</label>
+<select id="select_executor" <%= @selected_view == 'person' ? 'disabled' : '' %>>
+	<% @executors.each do |executor_id, executor| %>
+		<% if executor_id == @selected_executor_id %>
+			<option selected value="<%= executor_id %>"><%= executor[:name] %></option>
+		<% else %>
+			<option value="<%= executor_id %>"><%= executor[:name] %></option>
+		<% end %>
+	<% end %>
+</select>
+
+<%# Select station menu %>
+<label for="select_station">Станция:</label>
+<select id="select_station">
+	<% @stations.each do |station_id, station| %>
+    	<option value="<%= station_id %>" <%= @selected_station_id == station_id ? 'selected' : '' %>><%= station[:name] %></option>
+	<% end %>
+</select>
+
+
+<% if @selected_view == 'kanban' || @selected_view == '' %>
+	<div class="issues_container">
+		<% @statuses.each do |status_id, status| %>
+			<div class="status_column" data-id="<%= status_id %>">
+				<div class="status_column_header" style="border-bottom-color: <%= status[:color] %>">
+					<span> <%= status[:name] %> </span>
+				</div>
+				<div class="<%= status[:is_closed] ? "status_column_closed_issues" : "status_column_issues" %>">
+					<% @issues.select { |issue| ( @selected_station_id == -1 || issue[:station_name] == @stations[@selected_station_id][:name] ) &&
+  												  issue[:status_id] == status_id }.each do |issue| %>
+						<% project_name   = @projects[  issue[:project_id]][:name]  %>
+						<% project_color  = @projects[  issue[:project_id]][:color] %>
+						<% priority_color = @priorities[issue[:priority  ]][:color] %>
+						<% if issue[:executor] == @executors[@selected_executor_id][:name] || @selected_executor_id == -1 %>
+							<div class="issue_card" style="border-color: <%= project_color %>" data-id="<%= issue[:id] %>" onclick="goToIssue(<%= issue[:id] %>)">
+								<span class="issue_card_id"> <%= "#" + issue[:id].to_s %> </span>
+								<div class="issue_card_header">
+									<div class="issue_card_priority_date">
+										<% unless issue[:priority].nil? %>
+											<div class="issue_card_header_priority" style="background-color: <%= priority_color %>">
+												<%= @priorities[issue[:priority]][:name] %>
+											</div>
+										<% end %>
+										<% unless issue[:due_date].nil? %>
+											<div class="issue_card_header_date" style="background-color: <%= issue[:overdue] ? '#ff7878' : 'light-gray' %>">
+												<%= I18n.l(issue[:due_date], format: '%Y.%m.%d') %>
+											</div>
+										<% end %>
+									</div>
+									<% if @show_project_badge %>
+										<div class="issue_card_header_project" style="background-color: <%= project_color %>"> <%= project_name %> </div>
+									<% end %>
+								</div>
+								<span class="issue_card_title"> <%= issue[:subject] %> </span>
+								<% if @display_issue_card_author %>
+									<span class="issue_card_author"><i class="bi bi-person"></i> <%= issue[:author] %> </span>
+								<% end %>
+								<% if issue[:executor] == '' || issue[:executor].nil? %>
+									<span class="issue_card_executor_not_set"><i class="bi bi-hammer"></i> <%=l :executor_not_set %></span>
+								<% else %>
+									<span class="issue_card_executor"><i class="bi bi-hammer"></i> <%= issue[:executor] %> </span>
+								<% end %>
+								<% unless issue[:station_name].blank? %>
+									<span class="issue_card_station"><i class="bi bi-minecart-loaded"></i> <%= issue[:station_name] %> </span>
+								<% end %>
+							</div>
+						<% end %>
+					<% end %>
+				</div>
 			</div>
-			<div class="<%= status[:is_closed] ? "status_column_closed_issues" : "status_column_issues" %>">
-				<% @issues.select { |issue| issue[:status_id] == status_id }.each do |issue| %>
-					<% project_color = @projects[issue[:project_id]][:color] %>
-					<% project_name = @projects[issue[:project_id]][:name] %>
-					
-					
-					<% if issue[:executor] == @selected_executor || @selected_executor== -1 %>
-					<div class="issue_card" style="border-color: <%= project_color %>" data-id="<%= issue[:id] %>" onclick="goToIssue(<%= issue[:id] %>)">
-						<span class="issue_card_id"> <%= "#" + issue[:id].to_s %> </span>
-						<div class="issue_card_header">
-							<span class="issue_card_header_date"><%= I18n.l(issue[:created_on], format: :long) %></span>
-							<% if @show_project_badge %>
-								<div class="issue_card_header_project" style="background-color: <%= project_color %>"><%= project_name %></div>
+		<% end %>
+	</div>
+<% end %>
+
+<% if @selected_view == 'person' %>
+	<div class="issues_container">
+		<% @projects[@selected_project_id][:users].each do |executor_id| %>
+			<div class="status_column" data-id="<%= executor_id %>">
+				<div class="status_column_header" style="border-bottom-color: <%= executor_id == -2 ? '#ff7878' : 'blue' %>">
+					<span> <%= @executors[executor_id][:name] %> </span>
+				</div>
+				<div class="status_column_issues">
+					<% @issues.select { |issue| ( @selected_station_id == -1 || issue[:station_name] == @stations[@selected_station_id][:name] ) &&
+  												 issue[:executor] == @executors[executor_id][:name] }.each do |issue| %>
+						<% project_name   = @projects[  issue[:project_id]][:name ] %>
+						<% project_color  = @projects[  issue[:project_id]][:color] %>
+						<% priority_color = @priorities[issue[:priority  ]][:color] %>
+						<div class="issue_card" style="border-color: <%= project_color %>" data-id="<%= issue[:id] %>" onclick="goToIssue(<%= issue[:id] %>)">
+							<span class="issue_card_id"> <%= "#" + issue[:id].to_s %> </span>
+							<div class="issue_card_header">
+								<div class="issue_card_priority_date">
+									<% unless issue[:priority].nil? %>
+										<div class="issue_card_header_priority" style="background-color: <%= priority_color %>">
+											<%= @priorities[issue[:priority]][:name] %>
+										</div>
+									<% end %>
+									<% unless issue[:due_date].nil? %>
+										<div class="issue_card_header_date" style="background-color: <%= issue[:overdue] ? '#ff7878' : 'light-gray' %>">
+											<%= I18n.l(issue[:due_date], format: '%Y.%m.%d') %>
+										</div>
+									<% end %>
+								</div>
+								<% if @show_project_badge %>
+									<div class="issue_card_header_project" style="background-color: <%= project_color %>"> <%= project_name %> </div>
+								<% end %>
+							</div>
+							<span class="issue_card_title"> <%= issue[:subject] %> </span>
+							<% if @display_issue_card_author %>
+								<span class="issue_card_author"><i class="bi bi-person"></i> <%= issue[:author] %> </span>
+							<% end %>
+							<% unless issue[:station_name].blank? %>
+								<span class="issue_card_station"><i class="bi bi-minecart-loaded"></i> <%= issue[:station_name] %> </span>
 							<% end %>
 						</div>
-						<span class="issue_card_title"> <%= issue[:subject] %> </span>
-						<span class="issue_card_author"><i class="bi bi-person"></i> <%= issue[:author] %> </span>
-						<% if issue[:executor] == '' || issue[:executor].nil? %>
-							<span class="issue_card_executor_not_set"><i class="bi bi-hammer"></i> <%=l :executor_not_set %></span>
-						<% else %>
-							<span class="issue_card_executor"><i class="bi bi-hammer"></i> <%= issue[:executor] %> </span>
-						<% end %>
-					</div>
 					<% end %>
-				<% end %>
+				</div>
 			</div>
-		</div>
-	<% end %>
-</div>
+		<% end %>
+	</div>
+<% end %>
 
 <script>
 	$(function() {

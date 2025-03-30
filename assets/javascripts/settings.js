@@ -18,7 +18,7 @@ function genereateStatusesColors() {
     if (currentDegree < 0) {
       currentDegree = 0;
     }
-    item.value = hslToHex(currentDegree, 100, 50);
+    item.value = hslToHex(currentDegree, 100, 80);
     currentDegree -= degreePerItem;
   }); 
 }
@@ -32,12 +32,12 @@ function genereateProjectColors() {
     if (currentDegree > 360) {
       currentDegree = 360;
     }
-    item.value = hslToHex(currentDegree, 100, 45);
+    item.value = hslToHex(currentDegree, 100, 80);
     currentDegree += degreePerItem;
   }); 
 }
 
 function generateColors() {
-  genereateStatusesColors();
+  //genereateStatusesColors();
   genereateProjectColors();
 }

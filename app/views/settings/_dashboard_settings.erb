@@ -5,45 +5,60 @@
 <table>
   <tbody>
   <tr>
-    <th colspan="2"> <%=l :settings_header_statuses %> </td>
+    <th colspan="2"> <%= l :settings_header_statuses %> </th>
   </tr>
-  <% IssueStatus.sorted().each do |status| %>
+  <% IssueStatus.sorted.each do |status| %>
     <% property_name = "status_color_" + status.id.to_s %>
     <tr>
-      <td> <%= status.name %> </th>
+      <td> <%= status.name %> </td>
       <td>
         <input type="color" id="settings_<%= property_name %>" value="<%= settings[property_name] %>" name="settings[<%= property_name %>]">
       </td>
     </tr>
   <% end %>
+
   <tr>
-    <th colspan="2"> <%=l :settings_header_projects %> </td>
+    <th colspan="2"> <%= l :settings_header_priorities %> </th>
+  </tr>
+  <% IssuePriority.all.each do |priority| %>
+    <% property_name = "priority_color_" + priority.id.to_s %>
+    <tr>
+      <td> <%= priority.name %> </td>
+      <td>
+        <input type="color" id="settings_<%= property_name %>" value="<%= settings[property_name] %>" name="settings[<%= property_name %>]">
+      </td>
+    </tr>
+  <% end %>
+
+  <tr>
+    <th colspan="2"> <%= l :settings_header_projects %> </th>
   </tr>
   <% Project.where('status = 1').each do |project| %>
     <% property_name = "project_color_" + project.id.to_s %>
     <tr>
-      <td> <%= project.name %> </th>
+      <td> <%= project.name %> </td>
       <td>
         <input type="color" id="settings_<%= property_name %>" value="<%= settings[property_name] %>" name="settings[<%= property_name %>]">
       </td>
     </tr>
   <% end %>
+
   <tr>
     <td colspan="2">
       <button type="button" onclick="generateColors()"><%=l :settings_generate_colors %></button>
-    <td>
+    </td>
   </tr>
   <tr>
-    <th colspan="2"> <%=l :settings_header_other %> </td>
+    <th colspan="2"> <%= l :settings_header_other %> </th>
   </tr>
   <tr>
-    <td> <%=l :settings_enable_drag_and_drop %> </th>
+    <td> <%= l :settings_enable_drag_and_drop %> </td>
     <td>
       <%= check_box_tag "settings[enable_drag_and_drop]", true, @settings['enable_drag_and_drop'] %>
     </td>
   </tr>
   <tr>
-    <td> <%=l :settings_use_drop_down_menu %> </th>
+    <td> <%= l :settings_use_drop_down_menu %> </td>
     <td>
       <%= check_box_tag "settings[use_drop_down_menu]", false, @settings['use_drop_down_menu'] %>
     </td>
@@ -64,6 +79,12 @@
     <td> <%=l :settings_display_child_projects_tasks %> </th>
     <td>
       <%= check_box_tag "settings[display_child_projects_tasks]", false, @settings['display_child_projects_tasks'] %>
+    </td>
+  </tr>
+  <tr>
+    <td> <%=l :settings_display_issue_card_author %> </th>
+    <td>
+      <%= check_box_tag "settings[display_issue_card_author]", false, @settings['display_issue_card_author'] %>
     </td>
   </tr>
   </tbody>
